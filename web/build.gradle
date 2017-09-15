@@ -1,3 +1,11 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.akhikhl.gretty:gretty:2.0.0'
+    }
+}
 //定义仓库
 repositories {
     //自定义本地仓库
@@ -9,14 +17,6 @@ repositories {
     mavenLocal()
 }
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'org.akhikhl.gretty:gretty:2.0.0'
-    }
-}
 apply plugin: WarPlugin
 apply plugin: 'org.akhikhl.gretty'
 dependencies {

@@ -21,6 +21,21 @@ subprojects {
     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.1'
+}
+
+/* below is the gradle example*/
+
+task printlnProjectMsg {
+    group = 'project'
+    description = '项目解析'
+    doLast {
+        println project.name
+        println project.version
+    }
+}
+
 task greeting(type: GreetingTask) {
     greeting = 'howdy!'
 }
@@ -85,3 +100,12 @@ dependencies {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
 }
+apply plugin: GreetingPlugin
+greetingGradle {
+    message = 'Hi from Gradle'
+    outputFiles = files('a.txt', 'b.txt')
+}
+
+/* above is the gradle example*/
+
+

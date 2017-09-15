@@ -1,0 +1,26 @@
+//定义仓库
+repositories {
+    //自定义本地仓库
+    maven {
+        name "jcenter"
+        url "http://jcenter.bintray.com"
+    }
+    mavenCentral()
+    mavenLocal()
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.akhikhl.gretty:gretty:2.0.0'
+    }
+}
+apply plugin: WarPlugin
+apply plugin: 'org.akhikhl.gretty'
+dependencies {
+    compile project(':dao')
+    runtime 'javax.servlet:servlet-api:3.0-alpha-1'
+    runtimeOnly 'javax.servlet:jstl:1.2'
+}

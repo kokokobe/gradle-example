@@ -1,0 +1,87 @@
+buildscript {
+    apply plugin: GroovyPlugin
+}
+allprojects {
+    group = 'com.briliang'
+    ProjectVersion projectVersionTmp = new ProjectVersion(1, 1, false)
+    projectVersionTmp.major = 1
+    projectVersionTmp.minor = 1
+    projectVersionTmp.release = false
+    version = projectVersionTmp
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+}
+subprojects {
+    apply plugin: JavaPlugin
+    apply plugin: IdeaPlugin
+    apply plugin: MavenPlugin
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+}
+
+task greeting(type: GreetingTask) {
+    greeting = 'howdy!'
+}
+
+task a(group: 'example', description: 'task依赖') {
+    doLast {
+        println('a task');
+    }
+}
+
+task b(group: 'example', description: 'task依赖') {
+    doLast {
+        println('b task');
+    }
+}
+
+task dependenciesTask(group: 'example', description: 'task依赖', dependsOn: [b, a]) {
+    doLast {
+        println("dependenciesTask")
+    }
+}
+a.mustRunAfter b
+def versionFile = file('version.properties')
+def destFile= versionFile
+task makeReleaseVersion2(group: 'versioning', description: 'Make project a release version') {
+    inputs.property('release', version.release)
+    outputs.file versionFile
+    doLast {
+        version.release = true
+        ant.propertyfile(file: destFile) {
+            entry(key: 'release', type: 'string', operation: '=', value: 'true')
+        }
+    }
+}
+
+//挂接Task执行图
+gradle.taskGraph.whenReady { TaskExecutionGraph taskExecutionGraph ->
+    println taskExecutionGraph.allTasks
+    if (taskExecutionGraph.hasTask(":tasks")) {
+        println "task configuration insert"
+    }
+}
+//挂接生命周期监听器
+def taskListener = new TaskListener()
+gradle.taskGraph.addTaskExecutionGraphListener(taskListener)
+
+//定义配置
+configurations {
+    cargo {
+        description = 'Classpath for cargo Ant tasks'
+        visible = false
+    }
+}
+//定义属性
+ext {
+    spring = '4.2.6.RELEASE'
+}
+//定义配置依赖
+dependencies {
+    cargo("org.springframework:spring-core:${spring}") {
+        //排除依赖
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+}
